@@ -690,7 +690,7 @@ services:
       MQTTBROKERINFO_INCOMINGTOPIC: "incoming/data/#"
     hostname: edgex-device-mqtt
     build:
-      context: ../device-mqtt-go
+      context: ./device-mqtt-go
       dockerfile: Dockerfile
     image: device-mqtt-go-arm64:4.0.1
     #image: edgexfoundry/device-mqtt:4.0.0
