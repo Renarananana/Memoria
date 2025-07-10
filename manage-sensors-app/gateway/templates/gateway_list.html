@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Gateway{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Gateway</h2>
+
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Ip Address</th>
+      <th>Type</th>
+      <th>Status</th>
+      <th>Last seen</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for gateway in gateways %}
+    <tr onclick="window.location.href='{% url 'gateway-detail' gateway.pk %}'" style="cursor:pointer;">
+      <td>{{ gateway.name }}</td>
+      <td>{{ gateway.description }}</td>
+      <td>{{ gateway.ip_address }}</td>
+      <td>{{ gateway.gateway_type }}</td>
+      <td class = {% if gateway.status == "ACTIVE" %} "text-success" {% elif gateway.status == "OFFLINE" %} "text-danger" {% else %} "text-muted" {% endif %}>{{ gateway.status }}</td>
+      <td>{{ gateway.last_seen }}</td>
+      <td class="text-center">
+        <form method="POST" action="{% url 'delete-gateway' gateway.pk %}" onsubmit="return confirm('¿Are you sure you want to delete?');" style="display:inline;">
+        {% csrf_token %}
+          <button type="submit" class="btn btn-link p-0 m-0" onclick="event.stopPropagation();" title="Delete">
+            <i class="bi bi-trash-fill text-danger"></i>
+          </button>
+        </form>
+      </td>
+      <td class="text-center">
+        <a href="{% url 'edit-gateway' gateway.pk %}" class="btn btn-link p-0 m-0" onclick="event.stopPropagation();" title="Edit">
+          <i class="bi bi-pen-fill text-dark"></i>
+        </a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4">No Gateways.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a type="button" class="btn btn-dark" href="{% url 'create-gateway' %}">
+  <i class="bi bi-plus"></i>
+</a>
+{% endblock %}
+

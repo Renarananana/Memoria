@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h2><strong>Name:</strong> {{ profile.name }}</h2>
+<p><strong>Description:</strong> {{ profile.description }}</p>
+<p><strong>Model:</strong> {{ profile.model }}</p>
+<p><strong>Manufacturer:</strong> {{ profile.manufacturer }}</p>
+<p><strong>Labels:</strong> 
+  {% for label in profile.labels.all %}
+    {{ label.name }}{% if not forloop.last %}, {% endif %}
+  {% endfor %}
+</p>
+
+<h3><strong>Resources:</strong></h3>
+<div class="container">
+  <div class="row">
+    {% for resource in resources  %}
+      <div class="border border-dark p-3 col-4">
+        <div>
+          <strong>Name: </strong> {{resource.name}}
+        </div>
+        <div>
+          <strong>Description: </strong> {{resource.description}}
+        </div>
+        <div>
+          <strong>Value Type: </strong> {{resource.properties.valueType}}
+        </div>
+        <div>
+          <strong>Read/Write: </strong> {{resource.properties.readWrite}}
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+</div>
+<h3><strong>Commands:</strong></h3>
+<div class="container">
+  <div class="row">
+    {% for command in commands  %}
+      <div class="border border-dark p-3 col-4">
+        <div>
+          <strong>Name: </strong> {{command.name}}
+        </div>
+        <div>
+          <strong>Read/Write: </strong> {{command.readWrite}}
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+</div>
+
+
+<a href="{% url 'profiles-list' %}">Back to list</a>
+{% endblock %}

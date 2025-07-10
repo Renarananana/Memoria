@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Profiles{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Profiles</h2>
+
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Model </th>
+      <th>Manufacturer</th>
+      <th>Labels</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for profile in profiles %}
+    <tr onclick="window.location.href='{% url 'device-profile-detail' profile.pk %}'" style="cursor:pointer;">
+      <td>{{ profile.name }}</td>
+      <td>{{ profile.description }}</td>
+      <td>{{ profile.model }}</td>
+      <td>{{ profile.manufacturer }}</td>
+      <td>
+        {% for label in profile.labels.all %}
+          {{ label.name }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </td>
+      <td class="text-center">
+        <form method="POST" action="{% url 'device-profile-delete' profile.pk %}" onsubmit="return confirm('¿Are you sure you want to delete?');" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-link p-0 m-0" onclick="event.stopPropagation();" title="Borrar">
+            <i class="bi bi-trash-fill text-danger"></i>
+          </button>
+        </form>
+      </td>
+      <td class="text-center">
+        <a href="{% url 'edit-profile' profile.pk %}" class="btn btn-link p-0 m-0" onclick="event.stopPropagation();" title="Edit">
+          <i class="bi bi-pen-fill text-dark"></i>
+        </a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4">No Profiles.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a type="button" class="btn btn-dark" href="{% url 'create-profile' %}">
+  <i class="bi bi-plus"></i>
+</a>
+
+{% endblock %}
+

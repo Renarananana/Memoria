@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Add Profile{% endblock %}
+
+{% block content %}
+  <h2 class="mb-4">Add profile to Gateway</h2>
+  {% if msg %}
+  <div class="alert alert-danger" role="alert">
+  {{msg}}
+  </div>
+  {% endif %}
+
+  <form method="post" class="border p-4 rounded shadow-sm bg-light">
+    {% csrf_token %}
+    <div>
+      {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-dark">Save</button>
+  </form>
+{% endblock %}

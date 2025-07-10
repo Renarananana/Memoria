@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<h2><strong>Name:</strong> {{ gateway.name }}</h2>
+<p><strong>Description:</strong> {{ gateway.description }}</p>
+<p>
+  <strong>Status:</strong>
+  <span class= {% if gateway.status == "ACTIVE" %} "text-success" {% elif gateway.status == "OFFLINE" %} "text-danger" {% else %} "text-muted" {% endif %}>
+    {{ gateway.status }}
+  </span>
+</p>
+<p><strong>Ip Address:</strong> {{ gateway.ip_address }}</p>
+<p><strong>Last Seen:</strong> {{ gateway.last_seen }}</p>
+<p><strong>Type:</strong> {{ gateway.gateway_type }}</p>
+<div>
+  <p><strong>Profiles:</strong></p>
+  {% for gp in gateway_profiles %}
+  <div>{{gp.profile}}</div>
+  {% endfor %}
+  <a href="{% url 'add-profile' gateway.pk %}" class="btn btn-dark">
+    Add Profile
+  </a>
+</div>
+<div>
+  <p><strong>Devices:</strong></p>
+  {% for device in gateway_devices %}
+    <div>{{device}}</div>
+  {% endfor %}
+
+</div>
+<div>
+  <form action="{% url 'new-token' gateway.pk %}" onsubmit="return confirm('¿Are you sure you want to create a new token?');" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-link p-0 m-0" onclick="event.stopPropagation();" title="New Token">
+      New Token
+    </button>
+  </form>
+</div>
+
+<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" id="toggleSwitch"
+  onchange="window.location.href = this.checked ? '{% url 'activate-gateway' gateway.pk %}' : '{% url 'disable-gateway' gateway.pk %}'"
+  {% if gateway.status != "DISABLED" %}checked{% endif %}>
+  <label class="form-check-label" for="toggleSwitch">Activar Gateway</label>
+</div>
+<a href="{% url 'gateways-list' %}">Back to list</a>
+<br><br>
+<a href="{% url 'gateway-ping' gateway.pk %}" class="btn btn-dark">
+  Check Connection
+</a>
+<a href="{% url 'synch-profiles' gateway.pk %}" class="btn btn-dark">
+  Update Profiles
+</a>
+
+<a href="{% url 'synch-devices' gateway.pk %}" class="btn btn-dark">
+  Synch Devices
+</a>
+{% endblock %}

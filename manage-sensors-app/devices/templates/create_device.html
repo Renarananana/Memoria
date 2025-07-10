@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Device{% endblock %}
+
+{% block content %}
+  <h2 class="mb-4">Create Device</h2>
+
+  {% if msg %}
+    <div class="alert alert-danger" role="alert">
+      {{msg}}
+    </div>
+  {% endif %}
+
+  <form method="post" class="border p-4 rounded shadow-sm bg-light">
+    {% csrf_token %}
+    <div>
+      <div class="mb-3">{{form.name.as_field_group}}</div>
+      <div class="mb-3">{{form.description.as_field_group}}</div>
+      <div class="mb-3">{{form.gateway.as_field_group}}</div>
+      <div class="mb-3">{{form.admin_state.as_field_group}}</div>
+      <div class="mb-3">{{form.operating_state.as_field_group}}</div>
+      <div>
+        <label for="{{ form.labels.id_for_label }}">Labels:</label>
+        {{ form.labels }}
+        
+        <div id="empty-label-form" style="display:none;">
+          {{ label_formset.empty_form.as_p }}
+        </div>
+        {{ label_formset.management_form }}
+        <div id="label-container">
+          {% for form in label_formset %}
+          <div>
+            {{ form.as_p }}
+          </div>
+          {% endfor %}
+        </div>
+        {{ form.labels.errors }}
+      </div>
+      <button type="button" onclick="addLabelForm()">Add Label</button>
+
+      <div class="mb-3">{{form.profile.as_field_group}}</div>
+    </div>
+    <button type="submit" class="btn btn-dark">Save</button>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src= "{% static 'add_label.js' %}"></script>
+{% endblock %}

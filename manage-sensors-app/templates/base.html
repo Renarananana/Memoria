@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Mi Biblioteca{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap 5 (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 ps-4">
+    <a class="navbar-brand" href="/">Manage Sensors</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link {% if  '/devices/' in request.path %}active{% endif %}" href={% url "devices-list" %}>Devices</a>
+        <a class="nav-item nav-link {% if  '/profiles/' in request.path %}active{% endif %}" href={% url "profiles-list" %}>Profiles</a>
+        <a class="nav-item nav-link {% if  '/gateway/' in request.path %}active{% endif %}"href={% url "gateways-list" %}>Gateways</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  <footer class="bg-light text-center mt-5 p-3 border-top">
+    <p class="mb-0">&copy; 2025 - Memoria Renato Andaur</p>
+  </footer>
+
+  <!-- Bootstrap JS (opcional si usas componentes como modals, dropdowns, etc.) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  {% block scripts %}
+  {% endblock %}
+</body>
+</html>

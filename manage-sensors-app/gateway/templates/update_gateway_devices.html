@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block title %}Update Gateway Devices{% endblock %}
+
+{% block content %}
+  <h2 class="mb-4">Update Gateway Devices</h2>
+
+  <form method="post" class="border p-4 rounded shadow-sm bg-light">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    {% if not_synched %}
+      <div>
+        <h4><i>Devices not synched were found, choose actions:</i></h4>
+        {% for form in formset %}
+          {% with device=not_synched|index:forloop.counter0 %}
+          <div class="border border-dark p-2 mb-2">
+            <p><strong>Name:</strong> {{ device.name }}</p>
+            <p><strong>Description:</strong> {{ device.description }}</p>
+            <p><strong>Admin State:</strong> {{ device.adminState }}</p>
+            <p><strong>Operating State:</strong> {{ device.operatingState }}</p>
+            {% if device.labels %}
+              <p><strong>Labels:</strong> 
+                {% for label in device.labels %}
+                  {{ label }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+              </p>
+            {% endif %}
+            <p><strong>Profile:</strong> {{ device.profileName }}</a></p>
+            {% if device.deviceResources %}
+              <p><strong>Commands:</strong>
+                {% for command in device.deviceCommands  %}
+                  {{ command.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+              </p>
+            {% endif %}
+            {% if device.deviceCommands %}
+              <p><strong>Commands:</strong>
+                {% for command in device.deviceCommands  %}
+                  {{ command.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+              </p>
+            {% endif %}
+            <div>
+              <div>{{form.item_id}}</div>
+              <div>{{ form.decision.as_field_group }}</div>
+            </div>
+          </div>
+          {% endwith %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div>
+      {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-dark">Save</button>
+  </form>
+{% endblock %}

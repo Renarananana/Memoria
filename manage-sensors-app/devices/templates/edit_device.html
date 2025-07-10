@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Device{% endblock %}
+
+{% block content %}
+  <h2 class="mb-4">Edit Device</h2>
+
+  <form method="post" class="border p-4 rounded shadow-sm bg-light">
+    {% csrf_token %}
+    <div>
+      <div class="mb-3">{{form.name.label}}: <input type="text" value={{form.name.value}} disabled></div>
+      <div class="mb-3">{{form.description.as_field_group}}</div>
+      <div class="mb-3">{{form.admin_state.as_field_group}}</div>
+      <div class="mb-3">{{form.operating_state.as_field_group}}</div>
+
+      <div>
+        <label for="{{ form.labels.id_for_label }}">Labels:</label>
+        {{ form.labels }}
+        
+        <div id="empty-label-form" class= "d-none">
+          {{ label_formset.empty_form.as_p }}
+        </div>
+        {{ label_formset.management_form }}
+        <div id="label-container">
+          {% for form in label_formset %}
+          <div>
+            {{ form.as_p }}
+          </div>
+          {% endfor %}
+        </div>
+        {{ form.labels.errors }}
+      </div>
+      <button type="button" onclick="addLabelForm()">Add Label</button>
+
+      <div class="mb-3">{{form.profile.as_field_group}}</div>
+    </div>
+    <button type="submit" class="btn btn-dark">Save</button>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src= "{% static 'add_label.js' %}"></script>
+{% endblock %}

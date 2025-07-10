@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Edit Profile</h2>
+<form method="POST" autocomplete="off">
+  {% csrf_token %}
+    <div id="formPart1">
+      <fieldset>
+        <legend>Profile Data</legend>
+          <div class="mb-3">{{profile_form.name.as_field_group}}</div>
+          <div class="mb-3">{{profile_form.description.as_field_group}}</div>
+          <div class="mb-3">{{profile_form.manufacturer.as_field_group}}</div>
+          <div class="mb-3">{{profile_form.model.as_field_group}}</div>
+
+          <div>
+            <label for="{{ profile_form.labels.id_for_label }}">Labels:</label>
+            {{ profile_form.labels }}
+            
+            <div id="empty-label-form" style="display:none;">
+              {{ label_formset.empty_form.as_p }}
+            </div>
+            {{ label_formset.management_form }}
+            <div id="label-container">
+            </div>
+            {{ profile_form.labels.errors }}
+          </div>
+
+          <button type="button" onclick="addLabelForm()">Add Label</button>
+      </fieldset>
+    </div>
+
+
+    
+    <div id="formPart2" class="d-none">
+      {{ properties_formset.management_form }}
+      <fieldset class="formset">
+        <legend>Resources</legend>
+        {{ resource_formset.management_form }}
+        <div id="resource-container">
+          {% for res_form in resource_formset %}
+            <div>
+              <div>{{res_form.name.as_field_group}}</div>
+              <div>{{res_form.description.as_field_group}}</div>
+              {% for prop_form in properties_formset %}
+                {% if prop_form.instance == res_form.instance.properties %}
+                  <div>{{prop_form.valueType.as_field_group}}</div>
+                  <div>{{prop_form.readWrite.as_field_group}}</div>
+                {% endif %}
+              {% endfor %}
+              Delete: {{ res_form.DELETE }}
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" onclick="addResourceForm()">Add Resource</button>
+      </fieldset>
+    </div>
+
+
+
+    <div id="formPart3" class="d-none">
+      <fieldset class="formset">
+        <legend>Command (optional)</legend>
+        <div id="empty-command-form" class="d-none">
+          {{ command_formset.empty_form.as_p }}
+          <button type="button" onclick="addOperationForm(__prefix__)">Add Operation</button>
+        </div>
+        <div id="empty-operation-form" class="d-none">
+          {{ operation_formset.empty_form.as_p }}
+        </div>
+        {{ operation_formset.management_form}}
+        {{ command_formset.management_form }}
+        <div>
+          <div id="command-container">
+            {% for com_form in command_formset %}
+              <div>
+                <div>{{com_form.name.as_field_group}}</div>
+                <div>{{com_form.readWrite.as_field_group}}</div>
+                Delete: {{ com_form.DELETE }}
+                <button type="button" onclick="addOperationForm({{ forloop.counter0 }})">Add Operation</button>
+                <div id="{{forloop.counter0}}-operation-container">
+                  {% for op_form in operation_formset %}
+                    {% if op_form.instance.command == com_form.instance %}
+                      <div>{{ op_form.defaultValue.as_field_group }}</div>
+                      {{op_form.resource.value}}
+                      <div>{{ op_form.resource.as_field_group }} {{op_form.instance.resource.name}}</div>
+                      Delete: {{ op_form.DELETE }}
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <button type="button" onclick="addCommandForm()">Add Command</button>
+      </fieldset>
+    </div>
+    
+    <button type="button" onclick="prevStep()"><i class="bi bi-arrow-left"></i></button>
+    <button type="button" onclick="nextStep()"><i class="bi bi-arrow-right"></i></button>
+    <button type="submit">Save</button>
+  </form>
+  
+{% endblock %}
+{% block scripts %}
+  <script src= "{% static 'multi_step_form.js' %}"></script>
+{% endblock %}

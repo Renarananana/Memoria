@@ -1,0 +1,81 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+*.env
+.venv/
+.env/
+.envrc
+*.log
+*.sqlite3
+*.db
+.cache/
+.mypy_cache/
+pytest_cache/
+pip-wheel-metadata/
+dist/
+build/
+
+# === ESP32 / ESP-IDF / Arduino ===
+build/
+*.elf
+*.bin
+*.map
+*.hex
+sdkconfig
+sdkconfig.ci
+sdkconfig.old
+*.exe
+*.out
+*.a
+*.o
+*.obj
+*.d
+*.dSYM/
+*.pyc
+*.log
+.devcontainer/
+
+# IDF-specific
+.project/
+.cproject/
+.idea/
+.vscode/
+*.launch
+*.orig
+
+# Arduino
+*.ino.*
+*.cpp.*
+*.bak
+
+# === General ===
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.bak
+*.orig
+*.lock
+
+# === Git ===
+*.patch
+*.diff
+*.rej
+*.gz
+
+# === VSCode settings (optional) ===
+.vscode/
+
+# === PlatformIO (si usas PlatformIO para ESP32) ===
+.pio/
+
+#CA
+ca/
+certs/
+test-cert/

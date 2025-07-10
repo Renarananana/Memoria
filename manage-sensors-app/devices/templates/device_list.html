@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Devices{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Devices</h2>
+
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Admin State</th>
+      <th>Operating State</th>
+      <th>Labels</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for device in devices %}
+    <tr onclick="window.location.href='{% url 'device-detail' device.pk %}'" style="cursor:pointer;">
+      <td>{{ device.name }}</td>
+      <td>{{ device.description }}</td>
+      <td>{{ device.admin_state }}</td>
+      <td>{{ device.operating_state }}</td>
+      <td>
+        {% for label in device.labels.all %}
+          {{ label.name }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </td>
+      <td class="text-center">
+        <form method="POST" action="{% url 'delete-device' device.pk %}" onsubmit="return confirm('¿Are you sure you want to delete?');" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-link p-0 m-0" onclick="event.stopPropagation();" title="Borrar">
+          <i class="bi bi-trash-fill text-danger"></i>
+        </button>
+        </form>
+      </td>
+      <td class="text-center">
+        <a href="{% url 'edit-device' device.pk %}" class="btn btn-link p-0 m-0" onclick="event.stopPropagation();" title="Edit">
+          <i class="bi bi-pen-fill text-dark"></i>
+        </a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4">No Devices.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a type="button" class="btn btn-dark" href="{% url 'create-device' %}">
+  <i class="bi bi-plus"></i>
+</a>
+{% endblock %}
+

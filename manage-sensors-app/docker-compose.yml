@@ -1,0 +1,62 @@
+name: manage-sensors-app
+
+services:
+
+  postgres:
+    image: postgres
+    container_name: postgres-container
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  app: 
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    container_name: django-container
+    ports:
+      - "8001:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1885:1883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+  
+  mqtt-subscriber:
+    build: ./mqtt_subscriber
+    command: python main.py
+    depends_on:
+      - mosquitto
+      - postgres
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./mqtt_subscriber/app:/app
+  
+  redis:
+    image: redis:8
+    container_name: redis
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+volumes:
+  postgres_data:
+  redis-data:

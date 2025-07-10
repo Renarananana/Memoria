@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+{% load render_table from django_tables2 %}
+
+{% if msg %}
+  {% if msg.status_code == 200 %}
+    <div class="alert alert-success" role="alert">
+      {{msg.text}}
+    </div>
+  {% else %}
+    <div class="alert alert-danger" role="alert">
+      {{msg.status_code}}: {{msg.text}}
+    </div>
+  {% endif %}
+{% endif %}
+
+{% if "R" in resource.properties.readWrite %}
+  {% if plot_html %}
+    <h1>Gráfico Value vs Timestamp</h1>
+    {{ plot_html|safe }}
+  {% endif %}
+
+  <div class="container mt-4">
+    <h1>Data</h1>
+    {% render_table table %}
+  </div>
+  <form method="post" class="p-4">
+    {% csrf_token %}
+    <button type="submit" name="read" value="1" class="btn btn-dark">Read</button>
+  </form>
+
+{% endif %}
+
+{% if "W" in resource.properties.readWrite %}
+  <form method="post" class="border p-4 rounded shadow-sm bg-light">
+  {% csrf_token %}
+    <h3>Write:</h3>
+    Type: {{resource.properties.valueType}}
+    {{form.as_p}}
+    <button type="submit" class="btn btn-dark">Send</button>
+  </form>
+
+{% endif %}
+
+
+
+
+{% endblock %}

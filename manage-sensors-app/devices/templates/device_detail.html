@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h2><strong>Name:</strong> {{ device.name }}</h2>
+<p><strong>Description:</strong> {{ device.description }}</p>
+<p><strong>Admin State:</strong> {{ device.admin_state }}</p>
+<p><strong>Operating State:</strong> {{ device.operating_state }}</p>
+<p><strong>Labels:</strong> 
+  {% for label in device.labels.all %}
+    {{ label.name }}{% if not forloop.last %}, {% endif %}
+  {% endfor %}
+</p>
+<p><strong>Profile:</strong><a href="{% url 'device-profile-detail' device.profile.pk %}"> {{ device.profile }}</a></p>
+
+<h3><strong>Resources:</strong></h3>
+<div class="container">
+  <div class="row">
+    {% for resource in resources  %}
+      <div class="border border-dark p-3 col-4" style="cursor: pointer;" onclick="location.href='{% url 'plot' device.pk resource.pk %}'">
+        <div>
+          <strong>Name: </strong> {{resource.name}}
+        </div>
+        <div>
+          <strong>Description: </strong> {{resource.description}}
+        </div>
+        <div>
+          <strong>Value Type: </strong> {{resource.properties.valueType}}
+        </div>
+        <div>
+          <strong>Read/Write: </strong> {{resource.properties.readWrite}}
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+</div>
+<h3><strong>Commands:</strong></h3>
+<div class="container">
+  <div class="row">
+    {% for command in commands  %}
+      <div class="border border-dark p-3 col-4" style="cursor: pointer;" onclick="location.href='{% url 'command' device.pk command.pk %}'">
+        <div>
+          <strong>Name: </strong> {{command.name}}
+        </div>
+        <div>
+          <strong>Read/Write: </strong> {{command.readWrite}}
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+</div>
+
+<a href="{% url 'devices-list' %}">Back to list</a>
+{% endblock %}
