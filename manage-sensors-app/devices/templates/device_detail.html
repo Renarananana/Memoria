@@ -1,15 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<h2><strong>Name:</strong> {{ device.name }}</h2>
+<a class="text-dark text-decoration-none" href="{% url 'devices-list' %}"><h3><i class="bi bi-arrow-left"></i></h3></a>
+<div class="d-flex align-items-center gap-3 mb-2">
+  <h2><strong>Name:</strong> {{ device.name }}</h2>
+  <a href="{% url 'edit-device' device.pk %}" class="btn btn-outline-dark border-dark btn-sm" title="Edit">
+    <i class="bi bi-pen-fill"></i>
+  </a>
+  <form action="{% url 'delete-device' device.pk %}" method="post" class="d-inline"
+        onsubmit="return confirm('Are you sure you want to delete this device?');">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete Device">
+      <i class="bi bi-trash"></i>
+    </button>
+  </form>
+</div>
 <p><strong>Description:</strong> {{ device.description }}</p>
 <p><strong>Admin State:</strong> {{ device.admin_state }}</p>
 <p><strong>Operating State:</strong> {{ device.operating_state }}</p>
-<p><strong>Labels:</strong> 
-  {% for label in device.labels.all %}
-    {{ label.name }}{% if not forloop.last %}, {% endif %}
-  {% endfor %}
+{% if device.labels.all %}
+  <p><strong>Labels:</strong> 
+    {% for label in device.labels.all %}
+      {{ label.name }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+{% endif %}
 </p>
-<p><strong>Profile:</strong><a href="{% url 'device-profile-detail' device.profile.pk %}"> {{ device.profile }}</a></p>
+<p><strong>Gateway:</strong><a class="text-dark text-decoration-none" href="{% url 'gateway-detail' device.gateway.pk %}"> {{ device.gateway }}</a></p>
+
+<p><strong>Profile:</strong><a class="text-dark text-decoration-none" href="{% url 'device-profile-detail' device.profile.pk %}"> {{ device.profile }}</a></p>
 
 <h3><strong>Resources:</strong></h3>
 <div class="container">
@@ -44,11 +61,20 @@
         <div>
           <strong>Read/Write: </strong> {{command.readWrite}}
         </div>
+        <div>
+          <strong>Operations:</strong>
+          <div class= "container">
+            {% for operation in command.operations.all %}
+              <div>
+                <strong>{{operation.resource.name}}</strong> {% if operation.defaultValue %}: <strong>default value:</strong> {{operation.defaultValue}}{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     {% endfor %}
 
   </div>
 </div>
 
-<a href="{% url 'devices-list' %}">Back to list</a>
 {% endblock %}

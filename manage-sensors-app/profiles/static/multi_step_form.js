@@ -53,6 +53,15 @@ function validateState(step) {
   return true;
 }
 
+function markForDelete(btn) {
+    const container = btn.closest('div');
+    const checkbox = container.querySelector('input[type="checkbox"]');
+    if (checkbox) {
+      checkbox.checked = true;
+      container.classList.add("d-none");
+    }
+  }
+
 function prevStep() {
   step -=1;
   step = Math.max(1, step);
@@ -63,14 +72,22 @@ function updateFormStep() {
   step1.classList.add("d-none");
   step2.classList.add("d-none");
   step3.classList.add("d-none");
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  prevBtn.classList.add("d-none");
+  nextBtn.classList.add("d-none");
   switch (step) {
       case 1:
+        nextBtn.classList.remove("d-none");
         step1.classList.remove("d-none");
         break;
       case 2:
+        prevBtn.classList.remove("d-none");
+        nextBtn.classList.remove("d-none");
         step2.classList.remove("d-none");
         break;
       case 3:
+        prevBtn.classList.remove("d-none");
         step3.classList.remove("d-none");
         updateResources();
         break;
@@ -123,7 +140,7 @@ function addFormHelper(prefix, container){
   const regex = new RegExp('__prefix__', 'g');
   newFormHtml = newFormHtml.replace(regex, currentCount);
   const newDiv = document.createElement('div');
-  newDiv.classList.add('form-row');
+  newDiv.classList.add('form-row', 'mb-3', 'border', 'rounded', 'p-3', 'bg-white', 'position-relative');
   newDiv.innerHTML = newFormHtml;
   container.appendChild(newDiv);
   totalForms.value = currentCount + 1;
@@ -229,7 +246,6 @@ function updateResources() {
   selects.forEach(select => {
     // Limpiar opciones actuales
     const value = select.value;
-    console.log(value);
     select.innerHTML = '';
 
     // Agregar nuevas opciones

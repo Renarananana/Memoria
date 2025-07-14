@@ -4,84 +4,138 @@
 {% block title %}Create Profile{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Create Profile</h2>
-<form method="POST" autocomplete="off">
-  {% csrf_token %}
+<div class="container mt-4" style="max-width: 720px;">
+  <h2 class="mb-4">Create Profile</h2>
+  <form method="POST" autocomplete="off" class="border p-4 rounded shadow-sm bg-light">
+    {% csrf_token %}
+
+    <!-- Sección 1: Datos del perfil -->
     <div id="formPart1">
       <fieldset>
-        <legend>Profile Data</legend>
-          <div class="mb-3">{{profile_form.name.as_field_group}}</div>
-          <div class="mb-3">{{profile_form.description.as_field_group}}</div>
-          <div class="mb-3">{{profile_form.manufacturer.as_field_group}}</div>
-          <div class="mb-3">{{profile_form.model.as_field_group}}</div>
+        <legend class="mb-3">Profile Data</legend>
 
-          <div>
-            <label for="{{ profile_form.labels.id_for_label }}">Labels:</label>
-            {{ profile_form.labels }}
-            
-            <div id="empty-label-form" style="display:none;">
-              {{ label_formset.empty_form.as_p }}
-            </div>
-            {{ label_formset.management_form }}
-            <div id="label-container">
-            </div>
-            {{ profile_form.labels.errors }}
+        <div class="mb-3">{{ profile_form.name.as_field_group }}</div>
+        <div class="mb-3">{{ profile_form.description.as_field_group }}</div>
+        <div class="mb-3">{{ profile_form.manufacturer.as_field_group }}</div>
+        <div class="mb-3">{{ profile_form.model.as_field_group }}</div>
+
+        <div class="mb-3">
+          <label class="form-label" for="{{ profile_form.labels.id_for_label }}">Labels:</label>
+          {{ profile_form.labels }}
+          {{ profile_form.labels.errors }}
+
+          <div id="empty-label-form" class="mb-2 border rounded p-2 bg-white" style="display:none;">
+            {{ label_formset.empty_form.as_p }}
           </div>
 
-          <button type="button" onclick="addLabelForm()">Add Label</button>
+          {{ label_formset.management_form }}
+
+          <div id="label-container"></div>
+
+          <button type="button" class="btn btn-outline-dark btn-sm mt-2" onclick="addLabelForm()">Add Label</button>
+        </div>
       </fieldset>
     </div>
 
-
-    
+    <!-- Sección 2: Recursos -->
     <div id="formPart2" class="d-none">
       <fieldset class="formset">
-        <legend>Resources</legend>
+        <h4 class="mb-3">Resources</h4>
+
         {{ properties_formset.management_form }}
         {{ resource_formset.management_form }}
+
         <div id="resource-container">
           {% for res_form in resource_formset %}
-            <div class="form-row">
-              <div>{{res_form.name.as_field_group}}</div>
-              <div>{{res_form.description.as_field_group}}</div>
-              <div>{{properties_formset.0.valueType.as_field_group}}</div>
-              <div>{{properties_formset.0.readWrite.as_field_group}}</div>
-              Delete: {{ res_form.DELETE }}
+            <div class="mb-3 border rounded p-3 bg-white position-relative">
+              <div class="mb-2">{{ res_form.name.as_field_group }}</div>
+              <div class="mb-2">{{ res_form.description.as_field_group }}</div>
+              <div class="mb-2">{{ properties_formset.0.valueType.as_field_group }}</div>
+              <div class="mb-2">{{ properties_formset.0.readWrite.as_field_group }}</div>
+              <div class="form-check mt-2 d-none">
+                <label class="form-check-label">Delete:</label>
+                {{ res_form.DELETE }}
+              </div>
+              <button type="button"
+                      class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2"
+                      onclick="markForDelete(this)"
+                      title="Delete this Resource">
+                <i class="bi bi-x"></i>
+              </button>
             </div>
           {% endfor %}
         </div>
-        <button type="button" onclick="addResourceForm()">Add Resource</button>
+
+        <button type="button" class="btn btn-outline-dark btn-sm mt-2" onclick="addResourceForm()">Add Resource</button>
       </fieldset>
     </div>
 
-
-
+    <!-- Sección 3: Comandos -->
     <div id="formPart3" class="d-none">
       <fieldset class="formset">
-        <legend>Command (optional)</legend>
+        <h4 class="mb-3">Command (optional)</h4>
+
         <div id="empty-command-form" class="d-none">
-          {{ command_formset.empty_form.as_p }}
-          <button type="button" onclick="addOperationForm(__prefix__)">Add Operation</button>
+          <button type="button"
+                  class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2"
+                  onclick="markForDelete(this)"
+                  title="Delete this command">
+            <i class="bi bi-x"></i>
+          </button>
+          <div class="mb-2">{{ command_formset.empty_form.name.as_field_group }}</div>
+          <div class="mb-2">{{ command_formset.empty_form.readWrite.as_field_group }}</div>
+          <div class="form-check mt-2 d-none">
+            <label class="form-check-label">Delete:</label>
+            {{ command_formset.empty_form.DELETE }}
+          </div>
+          <button type="button" class="btn btn-outline-dark btn-sm mt-2 mb-2" onclick="addOperationForm(__prefix__)">Add Operation</button>
         </div>
+
         <div id="empty-operation-form" class="d-none">
-          {{ operation_formset.empty_form.as_p }}
-        </div>
-        {{ operation_formset.management_form}}
-        {{ command_formset.management_form }}
-        <div>
-          <div id="command-container">
+          <button type="button"
+                  class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2"
+                  onclick="markForDelete(this)"
+                  title="Delete this operation">
+            <i class="bi bi-x"></i>
+          </button>
+          <div class="mb-2">{{ operation_formset.empty_form.defaultValue.as_field_group }}</div>
+          <div class="mb-2">{{ operation_formset.empty_form.resource.as_field_group }}</div>
+          <div class="mb-2">{{ operation_formset.empty_form.command.as_field_group }}</div>
+          <div class="form-check mt-2 d-none">
+            <label class="form-check-label">Delete:</label>
+            {{ operation_formset.empty_form.DELETE }}
           </div>
         </div>
-        <button type="button" onclick="addCommandForm()">Add Command</button>
+
+        {{ operation_formset.management_form }}
+        {{ command_formset.management_form }}
+
+        <div id="command-container"></div>
+
+        <button type="button" class="btn btn-outline-dark btn-sm mt-2" onclick="addCommandForm()">Add Command</button>
       </fieldset>
     </div>
-    
-    <button type="button" onclick="prevStep()"><i class="bi bi-arrow-left"></i></button>
-    <button type="button" onclick="nextStep()"><i class="bi bi-arrow-right"></i></button>
-    <button type="submit">Save</button>
+
+    <!-- Navegación -->
+    <div class="d-flex justify-content-between mt-4">
+      <button type="button" id="prevBtn" class="d-none btn btn-secondary" onclick="prevStep()">
+        <i class="bi bi-arrow-left"></i> Back
+      </button>
+      <div class="ms-auto">
+        <button type="button" id="nextBtn" class="btn btn-secondary" onclick="nextStep()">
+          Next <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Guardar -->
+    <div class="mt-4">
+      <button type="submit" class="btn btn-dark w-100">Save</button>
+    </div>
   </form>
-  
+</div>
 {% endblock %}
+
 {% block scripts %}
-  <script src= "{% static 'multi_step_form.js' %}"></script>
+  <script src="{% static 'multi_step_form.js' %}"></script>
 {% endblock %}

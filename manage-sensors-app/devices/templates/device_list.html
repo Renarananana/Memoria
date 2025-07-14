@@ -9,7 +9,8 @@
   <thead class="table-dark">
     <tr>
       <th>Name</th>
-      <th>Description</th>
+      <th>Gateway</th>
+      <th>Profile</th>
       <th>Admin State</th>
       <th>Operating State</th>
       <th>Labels</th>
@@ -21,7 +22,8 @@
     {% for device in devices %}
     <tr onclick="window.location.href='{% url 'device-detail' device.pk %}'" style="cursor:pointer;">
       <td>{{ device.name }}</td>
-      <td>{{ device.description }}</td>
+      <td>{{ device.gateway }}</td>
+      <td>{{ device.profile }}</td>
       <td>{{ device.admin_state }}</td>
       <td>{{ device.operating_state }}</td>
       <td>

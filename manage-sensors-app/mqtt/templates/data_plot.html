@@ -16,7 +16,7 @@
 
 {% if "R" in resource.properties.readWrite %}
   {% if plot_html %}
-    <h1>Gráfico Value vs Timestamp</h1>
+    <h1>Graph {{resource.name}} vs Timestamp</h1>
     {{ plot_html|safe }}
   {% endif %}
 
