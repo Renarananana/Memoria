@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -43,6 +42,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#LOGIN
+LOGIN_URL = '/login/'  # URL donde se redirige si el usuario no está autenticado
+LOGIN_REDIRECT_URL = '/'  # A dónde se redirige después de hacer login
+LOGOUT_REDIRECT_URL = '/login/'  # A dónde se redirige después de hacer logout
+
+
 
 # Application definition
 
@@ -68,6 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middlewares.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'manage_sensors_app.urls'

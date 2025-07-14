@@ -64,8 +64,10 @@ class Gateway(models.Model):
   
   def check_online(self):
     try:
-      ping(self)
-      return True
+      if ping(self):
+        return True
+      else:
+        return False
     except Exception as e:
       print(e)
       return False

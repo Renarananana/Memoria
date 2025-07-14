@@ -5,7 +5,7 @@ from django.forms import formset_factory, Select
 from .forms import GatewayForm, GatewayProfilesForm, DecisionForm, DeviceDecisionForm, AddProfileForm
 from .models import Gateway, GatewayProfiles
 from profiles.models import DeviceProfile
-from devices.models import Device
+from devices.models import Device, Labels
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from utils.http_helpers import get, post, delete
 import uuid
@@ -247,9 +247,7 @@ def synch_devices(request, pk):
   
   if request.method == 'POST':
     formset = DecisionFormSet(request.POST)
-    print(formset)
     if formset.is_valid():
-      print("VALID")
       for form in formset:
         item_id = form.cleaned_data["item_id"]
         decision = form.cleaned_data["decision"]
@@ -260,10 +258,10 @@ def synch_devices(request, pk):
               if device["id"] == str(item_id):
                 delete_device_gateway(device["name"], pk)
                 break
-          case "create-profile":
+          case "create-device":
             for device in gateway_devices:
               if device["id"] == str(item_id):
-                create_device(device)
+                create_device(device, gateway)
                 break
           case "ignore":
             pass
@@ -295,8 +293,19 @@ def delete_device_gateway(name, pk):
 def create_profile(new_profile_data):
   pass
 
-def create_device(new_device_data):
-  pass
+def create_device(new_device_data, gateway):
+  labels=[Labels.objects.get_or_create(name=label)[0] for label in new_device_data["labels"]]
+  profile=DeviceProfile.objects.get(name=new_device_data["profileName"])
+  device = Device.objects.create(
+    id=new_device_data["id"],
+    name=new_device_data["name"],
+    description=new_device_data["description"],
+    admin_state=new_device_data["adminState"],
+    operating_state=new_device_data["operatingState"],
+    profile=profile,
+    gateway=gateway,
+  )
+  device.labels.set(labels)
 
 def edit_gateway(request, pk):
   gateway = get_object_or_404(Gateway, pk=pk)
@@ -313,8 +322,6 @@ def edit_gateway(request, pk):
 def gateway_detail(request, pk):
   gateway = get_object_or_404(Gateway, pk=pk)
   gp = GatewayProfiles.objects.filter(gateway=gateway)
-  print(gateway.password)
-  print(gateway.get_password())
   devices= Device.objects.filter(gateway=gateway)
   return render(request, 'gateway_detail.html', {"gateway": gateway, "gateway_profiles": gp, "gateway_devices": devices})
   
