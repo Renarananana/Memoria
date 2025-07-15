@@ -27,6 +27,8 @@ services:
       - redis
     restart: unless-stopped
     entrypoint: ["./entrypoint.sh"]
+    env_file:
+      - .env
   mosquitto:
     image: eclipse-mosquitto:2.0
     container_name: mosquitto
