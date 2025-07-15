@@ -3,3 +3,5 @@ venv/
 Dockerfile
 .DS_Store
 mqtt_subscriber/
+mosquitto/
+.vscode/

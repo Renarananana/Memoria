@@ -26,6 +26,7 @@ services:
       - postgres
       - redis
     restart: unless-stopped
+    entrypoint: ["./entrypoint.sh"]
   mosquitto:
     image: eclipse-mosquitto:2.0
     container_name: mosquitto
