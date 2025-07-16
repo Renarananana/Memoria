@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.urls import resolve
 
-EXEMPT_URLS = [settings.LOGIN_URL, '/admin']  # Rutas sin login
+EXEMPT_URLS = [settings.LOGIN_URL, '/admin', "/gateway/sign-csr"]  # Rutas sin login
 
 class LoginRequiredMiddleware:
     def __init__(self, get_response):
