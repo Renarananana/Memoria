@@ -378,7 +378,7 @@ def sign_csr(request):
 
   # Firmar CSR con la CA
   cmd = [
-    "openssl", "ca", "-batch", "-config", "openssl.cnf", "-policy",
+    "openssl", "ca", "-batch", "-config", "ca/openssl.cnf", "-policy",
     "signing_policy", "-extensions", "signing_req", "-out",
     cert_path, "-infiles", csr_path
   ]
