@@ -44,6 +44,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", 'django-insecure-b&1ncytas9u*97z^xu*z*)^2@m
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', "localhost").split(',')
 
 #LOGIN
 LOGIN_URL = '/login/'  # URL donde se redirige si el usuario no está autenticado
