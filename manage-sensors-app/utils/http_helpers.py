@@ -51,17 +51,38 @@ def get_user_api_token(gateway):
   token = cache.get(key)
   if token:
     return token
-  # Obtener las credenciales del usuario (pueden estar en un modelo relacionado)
-  response = requests.post(f"http://{gateway.ip_address}:5000/login", json={
-    "username": gateway.username,
-    "password": gateway.get_password()
-  })
 
-  if response.status_code == 200:
-    data = response.json()
-    jwt = data['jwt']
-    expires_in = data.get('expires_in', data["ttl"])
-    cache.set(key, jwt, timeout=expires_in - 30)
-    return jwt
-  else:
-    raise Exception(f"Could not get jwt for: {gateway.name}")
+  try:
+    login_url = f"https://{gateway.ip_address}:8443/vault/v1/auth/userpass/login/{gateway.username}"
+    login_payload = {"password": gateway.get_password()}
+    login_resp = requests.post(login_url, json=login_payload, verify="ca/cacert.pem", timeout=10)
+    login_resp.raise_for_status()
+  except requests.RequestException as e:
+    raise Exception(f"Login failed for {gateway.name}: {e}") from e
+
+  auth_data = login_resp.json().get("auth")
+  if not auth_data or "client_token" not in auth_data:
+    raise Exception(f"Invalid login response for {gateway.name}: {login_resp.text}")
+
+  secret_store_token = auth_data["client_token"]
+
+  headers = {"Authorization": f"Bearer {secret_store_token}"}
+  token_url = f"https://{gateway.ip_address}:8443/vault/v1/identity/oidc/token/{gateway.username}"
+
+  try:
+    token_resp = requests.get(token_url, headers=headers, verify="ca/cacert.pem", timeout=10)
+    token_resp.raise_for_status()
+  except requests.RequestException as e:
+    raise Exception(f"Could not get JWT for {gateway.name}: {e}") from e
+
+  data = token_resp.json().get("data")
+  if not data or "token" not in data:
+    raise Exception(f"Invalid token response for {gateway.name}: {token_resp.text}")
+
+  jwt = data["token"]
+  expires_in = data.get("ttl")
+  cache_timeout = max(expires_in - 30, 60)  # cachea mínimo 60 segundos
+
+  cache.set(key, jwt, timeout=cache_timeout)
+
+  return jwt
