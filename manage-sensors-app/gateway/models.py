@@ -23,6 +23,7 @@ class Gateway(models.Model):
   name = models.CharField(max_length=100)
   description = models.CharField()
   ip_address = models.CharField()
+  api_port = models.IntegerField(default=443)
   gateway_type = models.CharField(
     max_length=10,
     choices=GatewayType.choices

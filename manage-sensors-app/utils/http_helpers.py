@@ -2,7 +2,7 @@ import requests
 from django.core.cache import cache
 
 def post(gateway, path, json = {}, params = {}):
-  url = f"https://{gateway.ip_address}:8443{path}"
+  url = f"https://{gateway.ip_address}:{gateway.api_port}{path}"
   jwt= get_user_api_token(gateway)
   headers = {
     "Authorization": f"Bearer {jwt}"
@@ -10,7 +10,7 @@ def post(gateway, path, json = {}, params = {}):
   return requests.post(url, json=json, params=params, headers=headers, verify="ca/cacert.pem")
 
 def get(gateway, path, params= {}):
-  url = f"https://{gateway.ip_address}:8443{path}"
+  url = f"https://{gateway.ip_address}:{gateway.api_port}{path}"
   jwt= get_user_api_token(gateway)
   headers = {
     "Authorization": f"Bearer {jwt}"
@@ -18,7 +18,7 @@ def get(gateway, path, params= {}):
   return requests.get(url, params= params, headers=headers, verify="ca/cacert.pem")
 
 def delete(gateway, path):
-  url = f"https://{gateway.ip_address}:8443{path}"
+  url = f"https://{gateway.ip_address}:{gateway.api_port}{path}"
   jwt= get_user_api_token(gateway)
   headers = {
     "Authorization": f"Bearer {jwt}"
@@ -26,7 +26,7 @@ def delete(gateway, path):
   return requests.delete(url, headers=headers, verify="ca/cacert.pem")
 
 def put(gateway, path, json={}):
-  url = f"https://{gateway.ip_address}:8443{path}"
+  url = f"https://{gateway.ip_address}:{gateway.api_port}{path}"
   jwt= get_user_api_token(gateway)
   headers = {
     "Authorization": f"Bearer {jwt}"
@@ -39,7 +39,7 @@ def ping(gateway, timeout=5):
     "Authorization": f"Bearer {jwt}"
   }
   try:
-    response = requests.get(f"https://{gateway.ip_address}:8443/core-metadata/api/v3/ping",headers=headers, timeout=timeout, verify="ca/cacert.pem")
+    response = requests.get(f"https://{gateway.ip_address}:{gateway.api_port}/core-metadata/api/v3/ping",headers=headers, timeout=timeout, verify="ca/cacert.pem")
     if response.status_code != 200:
       return False
     return True
@@ -53,7 +53,7 @@ def get_user_api_token(gateway):
     return token
 
   try:
-    login_url = f"https://{gateway.ip_address}:8443/vault/v1/auth/userpass/login/{gateway.username}"
+    login_url = f"https://{gateway.ip_address}:{gateway.api_port}/vault/v1/auth/userpass/login/{gateway.username}"
     login_payload = {"password": gateway.get_password()}
     login_resp = requests.post(login_url, json=login_payload, verify="ca/cacert.pem", timeout=10)
     login_resp.raise_for_status()
@@ -67,7 +67,7 @@ def get_user_api_token(gateway):
   secret_store_token = auth_data["client_token"]
 
   headers = {"Authorization": f"Bearer {secret_store_token}"}
-  token_url = f"https://{gateway.ip_address}:8443/vault/v1/identity/oidc/token/{gateway.username}"
+  token_url = f"https://{gateway.ip_address}:{gateway.api_port}/vault/v1/identity/oidc/token/{gateway.username}"
 
   try:
     token_resp = requests.get(token_url, headers=headers, verify="ca/cacert.pem", timeout=10)

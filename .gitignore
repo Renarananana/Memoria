@@ -10,6 +10,8 @@ __pycache__/
 *.env.prod
 .venv/
 .env/
+venv/
+env/
 .envrc
 *.log
 *.sqlite3
