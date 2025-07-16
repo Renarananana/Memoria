@@ -27,9 +27,11 @@
       <td>{{ device.admin_state }}</td>
       <td>{{ device.operating_state }}</td>
       <td>
-        {% for label in device.labels.all %}
-          {{ label.name }}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
+        {% if device.labels %}
+          {% for label in device.labels.all %}
+            {{ label.name }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        {% endif %}
       </td>
       <td class="text-center">
         <form method="POST" action="{% url 'delete-device' device.pk %}" onsubmit="return confirm('¿Are you sure you want to delete?');" style="display:inline;">
