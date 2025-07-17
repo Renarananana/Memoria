@@ -34,7 +34,7 @@ services:
     container_name: mosquitto
     restart: unless-stopped
     ports:
-      - "1885:1883"
+      - "1883:1883"
     volumes:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/data:/mosquitto/data

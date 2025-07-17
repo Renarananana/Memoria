@@ -7,7 +7,7 @@ def post(gateway, path, json = {}, params = {}):
   headers = {
     "Authorization": f"Bearer {jwt}"
   }
-  return requests.post(url, json=json, params=params, headers=headers, verify="ca/cacert.pem")
+  return requests.post(url, json=json, params=params, headers=headers)
 
 def get(gateway, path, params= {}):
   url = f"https://{gateway.ip_address}:{gateway.api_port}{path}"
@@ -15,7 +15,7 @@ def get(gateway, path, params= {}):
   headers = {
     "Authorization": f"Bearer {jwt}"
   }
-  return requests.get(url, params= params, headers=headers, verify="ca/cacert.pem")
+  return requests.get(url, params= params, headers=headers)
 
 def delete(gateway, path):
   url = f"https://{gateway.ip_address}:{gateway.api_port}{path}"
@@ -23,7 +23,7 @@ def delete(gateway, path):
   headers = {
     "Authorization": f"Bearer {jwt}"
   }
-  return requests.delete(url, headers=headers, verify="ca/cacert.pem")
+  return requests.delete(url, headers=headers)
 
 def put(gateway, path, json={}):
   url = f"https://{gateway.ip_address}:{gateway.api_port}{path}"
@@ -31,7 +31,7 @@ def put(gateway, path, json={}):
   headers = {
     "Authorization": f"Bearer {jwt}"
   }
-  return requests.put(url, json=json, headers=headers, verify="ca/cacert.pem")
+  return requests.put(url, json=json, headers=headers)
 
 def ping(gateway, timeout=5):
   jwt= get_user_api_token(gateway)
@@ -39,7 +39,7 @@ def ping(gateway, timeout=5):
     "Authorization": f"Bearer {jwt}"
   }
   try:
-    response = requests.get(f"https://{gateway.ip_address}:{gateway.api_port}/core-metadata/api/v3/ping",headers=headers, timeout=timeout, verify="ca/cacert.pem")
+    response = requests.get(f"https://{gateway.ip_address}:{gateway.api_port}/core-metadata/api/v3/ping",headers=headers, timeout=timeout)
     if response.status_code != 200:
       return False
     return True
@@ -55,7 +55,7 @@ def get_user_api_token(gateway):
   try:
     login_url = f"https://{gateway.ip_address}:{gateway.api_port}/vault/v1/auth/userpass/login/{gateway.username}"
     login_payload = {"password": gateway.get_password()}
-    login_resp = requests.post(login_url, json=login_payload, verify="ca/cacert.pem", timeout=10)
+    login_resp = requests.post(login_url, json=login_payload, timeout=10)
     login_resp.raise_for_status()
   except requests.RequestException as e:
     raise Exception(f"Login failed for {gateway.name}: {e}") from e
@@ -70,7 +70,7 @@ def get_user_api_token(gateway):
   token_url = f"https://{gateway.ip_address}:{gateway.api_port}/vault/v1/identity/oidc/token/{gateway.username}"
 
   try:
-    token_resp = requests.get(token_url, headers=headers, verify="ca/cacert.pem", timeout=10)
+    token_resp = requests.get(token_url, headers=headers, timeout=10)
     token_resp.raise_for_status()
   except requests.RequestException as e:
     raise Exception(f"Could not get JWT for {gateway.name}: {e}") from e
